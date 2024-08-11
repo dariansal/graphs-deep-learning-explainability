@@ -6,6 +6,7 @@ __pycache__/
 #virtual environment
 myenv/
 source.py
+notebooks/SBM-scratch.ipynb
 # C extensions
 *.so
 
