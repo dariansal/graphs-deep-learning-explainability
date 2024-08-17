@@ -111,9 +111,8 @@ PGExplainer correctly identified the subgraph that led to the GIN classifier's d
 ## Recap of Model Performance
 
 1. GCN Classifier
-- **Train Accuracy**: 100%
-- **Test Accuracy**: 100%
-
+- **Train Accuracy**: 100.00%
+- **Test Accuracy**: 100.00%
 
 2. GIN (Initial):
 - **Train Accuracy**: 99.38%
