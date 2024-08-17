@@ -6,7 +6,6 @@ __pycache__/
 #virtual environment
 myenv/
 source.py
-notebooks/SBM-scratch.ipynb
 
 # C extensions
 *.so
@@ -94,7 +93,6 @@ $RECYCLE.BIN/
 
 # Output files from Jupyter Notebook
 *.html
-*.pdf
 
 # Temporary files
 *.temp
