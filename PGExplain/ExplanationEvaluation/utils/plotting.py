@@ -48,7 +48,7 @@ def plot(graph, edge_weights, labels, idx, thres_min, thres_snip, dataset, args=
         if edge_weights[i] <= thres and not graph[0][i] == graph[1][i]:
             pos_edges.append((graph[0][i].item(), graph[1][i].item()))
         
-        # Select all edges to plot
+        # If edge is not a connection to itself and important add it
         if edge_weights[i] < filter_thres and not graph[0][i] == graph[1][i]:
             filter_edges.append((graph[0][i].item(), graph[1][i].item()))
             filter_nodes.add(graph[0][i].item())
