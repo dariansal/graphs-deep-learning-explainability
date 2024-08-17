@@ -25,6 +25,7 @@ def plot(graph, edge_weights, labels, idx, thres_min, thres_snip, dataset, args=
     :param show: flag to show plot made
     """
     # Set thresholds
+    ###ADJUSTED THIS PART
     sorted_edge_weights, _ = torch.sort(edge_weights, descending=False)  # Sort in ascending order
     thres_index = min(int(thres_snip), edge_weights.shape[0] - 1)
     thres = sorted_edge_weights[thres_index]
@@ -36,13 +37,14 @@ def plot(graph, edge_weights, labels, idx, thres_min, thres_snip, dataset, args=
                                 min(int(edge_weights.shape[0]/2),
                                     thres_min))
     filter_thres = sorted_edge_weights[filter_thres_index]
+    #####ADJUSTMENT FINISHED
 
     # Init edges
     filter_nodes = set()
     filter_edges = []
     pos_edges = []
 
-    # Select all edges and nodes to plot
+    #PLOTTED LEAST IMPORTANT
     for i in range(edge_weights.shape[0]):
         # Select least important edges
         if edge_weights[i] <= thres and not graph[0][i] == graph[1][i]:

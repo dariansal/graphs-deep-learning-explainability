@@ -89,8 +89,12 @@ Improved Results
 ## PGExplainer
 - PGExplainer was used to extract relevant subgraphs that contributed to the fine-tuned GIN's predictions
 
+## Implementation
+
 ### Inference
 - After training PGExplainer, graphs from the custom BA2MOTIF dataset were inserted into both the GIN classifier and PGExplainer
+- Originally, PGExplainer performed very poorly, extracting the incorrect subgraph for all the graphs tested
+- After discovering PGExplainer consistently confused the most important edges for the least edges, the `plotting.py` module was altered to pick the least important edges from the subgraph and plot them
 
 <figure>
   <img src="visuals/explained.png" alt="BA2MOTIF" width="600" height="250">
@@ -103,10 +107,8 @@ This graph from the custom BA2MOTIF dataset was correctly classified by the fine
   <figcaption>Figure 4: PGExplainer's explanation of Figure 3</figcaption>
 </figure>
 
-PGExplainer correctly identified the subgraph that led to the GIN classifier's decision. More important edges are colored dark grey, while less important edges are light grey.
 
-- Evaluation on individual samples shows excellent visual extraction of motifs
-- Overall accuracy cannot be currently evaluated due to lack of ground truth labels for motif edges (In Progress)
+As a result of this temporary fix, PGExplainer correctly identifies the subgraph that led to the GIN classifier's decision for nearly all samples in the dataset when tested individually. More important edges are colored dark grey, while less important edges are light grey.
 
 ## Results and Discussion
 ### Recap of Model Performance
@@ -123,10 +125,17 @@ PGExplainer correctly identified the subgraph that led to the GIN classifier's d
 - **Train Accuracy**: 99.69%
 - **Test Accuracy**: 100.00%
 
+4. PGExplainer
+- Overall accuracy cannot be currently evaluated due to lack of ground truth labels for motif edges
+- It is suspected that the explainer identifies the most important edges for the correct class as the least important for detecting the other class, which may lead to incorrect explanations
+
 ### Key Takeaways
 
 - The BA2MOTIF dataset is a common benchmark for evaluating graph explainers
 - Both GCN and GIN perform exceptionally well in classifying the BA2MOTIF dataset
 - Fine-tuning with graph perturbations improved the GIN's performance to match that of the GCN
-- PGExplainer effectively justifies the classifications made by the fine-tuned GIN, providing visual explanations of the relevant motifs
+- PGExplainer, when the fix described above applied, properly justifies the classifications made by the fine-tuned GIN
+
+### Future Work
+- [In Progress] Investigate why PGExplainer made decision to identify important edges as the least important
 - [In Progress] Evaluate the PGExplainer's accuracy against ground truth labels for motif edges
