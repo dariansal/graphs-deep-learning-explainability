@@ -83,8 +83,13 @@ For detailed methodologies and analyses, refer to the reports in the **`model-re
   - GIN Test Accuracy: 99.50% 
   - Fine-tuned GIN Test Accuracy: 100.00%
 
+- **PGExplainer:**
+- Overall accuracy cannot be currently evaluated due to lack of ground truth labels for motif edges (In Progress)
+
+
 
 ## Future Plans
+- [In Progress] Investigate why PGExplainer made decision to identify important edges as the least important before temporary fix (detailed in `BA2-PGExplainer-methodology-report.md`) 
 - [In Progress] Evaluate PGExplainer for the entire dataset
 - Implement PGExplainer from scratch
 - Research different explainability models to address out-of-distribution (OOD) problems for training explainers (i.e., explainable subgraph is OOD when fed back into graph classification model)
