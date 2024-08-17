@@ -58,7 +58,7 @@ The BA2MOTIF dataset is a synthetic dataset of 1000 BA graphs with a motif attac
 - Successfully predicted a cycle motif with 95.85% confidence
 
 
-### Graph Isomorphism Network (GIN)
+### Graph Isomorphism Network (GIN) Classifier
 **Structure**
 - 2 convolution layers with MLP in the aggregation function
    - Dropout in each MLP after activation in the first hidden layer
@@ -108,12 +108,12 @@ PGExplainer correctly identified the subgraph that led to the GIN classifier's d
 - Evaluation on individual samples shows excellent visual extraction of motifs
 - Overall accuracy cannot be currently evaluated due to lack of ground truth labels for motif edges (In Progress)
 
-## Recap of Model Performance
+## Results and Discussion
+### Recap of Model Performance
 
 1. GCN Classifier
-- **Train Accuracy**: 100%
-- **Test Accuracy**: 100%
-
+- **Train Accuracy**: 100.00%
+- **Test Accuracy**: 100.00%
 
 2. GIN (Initial):
 - **Train Accuracy**: 99.38%

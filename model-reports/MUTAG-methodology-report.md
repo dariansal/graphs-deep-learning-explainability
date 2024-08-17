@@ -5,7 +5,7 @@
    - [Matrix Representation](#matrix-representation)
    - [Dictionary Representation](#dictionary-representation)
 3. [MUTAG Dataset](#mutag-dataset)
-4. [Graph Isomorphism Network](#graph-isomorphism-network)
+4. [Graph Isomorphism Network (GIN)](#graph-isomorphism-network-gin)
 5. [Results and Discussion](#results-and-discussion)
    - [Model Performance](#model-performance)
    - [Key Takeaways](#key-takeaways)

@@ -1,50 +1,67 @@
+## Introduction
+This repository contains research on graph deep learning models and model explainability, focusing on Graph Convolutional Networks (GCN), Graph Isomorphism Networks (GIN), and their applications to graph classification tasks. It also includes custom implementations of datasets, fine-tuning techniques, and the use of PGExplainer for model interpretability.
 
 ## Purpose
-This repository was created to gain a better understanding of some of the research of graph deep learning models and model explainability done this summer. This includes:
-- Classes to create molecular graphs with both underlying matrix representations (used by PyTorch) and dictionary representations (used by NetworkX)
-- Various Graph Convolutional Network (GCN) and Graph Isomorphism Network (GIN) classification models
+This repository includes the following:
+
+- Custom molecular graph classes with underlying matrix and dictionary representations
 - A creation of a custom BA2MOTIF dataset from scratch
+- Various GCN and GIN classification models
 - Fine-tuning with edge pertubation and node feature masking
 - Use of PGExplainer to explain GIN classifications on BA2MOTIF dataset by extracting motif subgraph
 
-In addition to this code, I also researched other popular explainers (e.g., GNNExplainer, ProxyExplainer) and learned of the basics of discrete denoise diffusion modeling (e.g., Digress, RePaint) for graph generation.
+Additional researched areas include:
+- New explainers for graph models (e.g., GNNExplainer, ProxyExplainer)
+- Discrete denoise diffusion modeling for graph generation (e.g., Digress, RePaint)
 
 ## Reproducibility
-To reproduce the project:
-1. Ensure Python 3.10.14 is installed.
-2. Set up a virtual environment using Python 3.10.14.
-3. Run `pip install -r requirements.txt` to install the necessary packages.
+
+1. Install Python 3.10.14.
+2. Set up and activate a virtual environment:
+    ```zsh
+    python3.10 -m venv venv
+    source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+    ```
+3. Install dependencies:
+    ```zsh
+    pip install -r requirements.txt
+    ```
 
 ## Project Structure
 The project is organized as follows:
 
 - **`data/`**: 
-  - **`BA2MOTIF/`**: Contains premade BA2MOTIF dataset
+  - **`BA2MOTIF/`**: Premade BA2MOTIF dataset
   - `custom-ba2motif.pkl`: Serialized version of the custom BA2MOTIF dataset.
-  - **`MUTAG/`**: Contains the official MUTAG dataset
+  - `ba2-explain.pkl`: Custom BA2MOTIF dataset used for PGExplainer
+  - **`MUTAG/`**: Official MUTAG dataset
 
-- **`model-reports/`**: Contains reports of the methodologies and analysis of each of the models
-  - **`visuals/`** contains images that were present in the reports 
-  - `MUTAG-model-reports.md` 
-  - `BA2MOTIF-model-report.md`
+- **`model-reports/`**: Methodology and analysis reports
+  - **`visuals/`** contains images used in the reports 
+  - `BA2-PGExplainer-methodology-report.md`
+  - `MUTAG-methodology-report.md`
 
-- **`models/`**: Contains saved graph classification GNNs:
-  - The models contain the following naming convention (`{GCN/GIN}-{test-accuracy}.pth`, placeholders enclosed in {})
-  - **`BA2MOTIF/`**: Contains GNNs for custom BA2MOTIF dataset
-  - **`MUTAG/`**: Contains GNNs for official MUTAG dataset
+- **`models/`**: Saved graph classification GNNs:
+  - Naming convention `{GCN/GIN}-{test-accuracy}.pth`; placeholders enclosed in {}
+  - **`BA2MOTIF/`**: Trained GNNs for custom BA2MOTIF dataset
+  - **`MUTAG/`**: Trained GNNs for official MUTAG dataset
+  - **`PGExplainer/`**: Trained PGExplainer for BA2MOTIF classification models
   
-- **`notebooks/`**: Contains the model development process for each of the models created
-  - `BA2Motif-scratch.ipynb` contains analysis of BA2MOTIF dataset, custom implementation of dataset, development of GCN and GIN, fine-tuning, and addition of PGExplainer
-  - `MUTAG-scratch.ipynb`: Includes creation of molecular graph classes with underlying matrix and dictionary structures. Also includes GIN classifier
+- **`notebooks/`**: Model development process
+  - `BA2Motif-scratch.ipynb`: BA2MOTIF dataset analysis and implementation, GCN/GIN development, fine-tuning, addition of PGExplainer
+  - `MUTAG-scratch.ipynb`: Custom molecular graph classes and GIN classifier
+  - `PGExplainer.ipynb`: Training and inference of explainer with custom BA2MOTIF dataset
 
-- `notes.pdf`: Handwritten notes created to better understand and complete the project. Listed below are the most important sections to guide understanding.
+- **`PGExplain/`**: Modified PGExplainer code
+
+- `notes.pdf`: Handwritten notes on project concepts. Listed below are the most important sections to guide understanding.
   - Table of Contents (page 1)
   - GNNs (pages 7–16)
   - PGExplainer (pages 23–34)
 
 
 ## Citations
-I modified the code (cited below) for PGExplainer, a parameterized explainer, to be compatible with the custom BA2MOTIF dataset I created. 
+This project uses modified code of PGExplainer. The code was modified to be compatible with the custom BA2MOTIF dataset.
 
 **Bibtex citation**
 ```
@@ -56,12 +73,21 @@ I modified the code (cited below) for PGExplainer, a parameterized explainer, to
 }
 ```
 ## Summary of Results
-Details of the models and their methodologies provided in **`model-reports/`**. However, for a quick summary, the MUTAG classification GIN had a test accuracy of 86.84%. Additionally, for the custom BA2MOTIF dataset, the test accuracies for the GCN, GIN, fine-tuned GIN, were 100%, 99.50%, and 100% respectively.
+For detailed methodologies and analyses, refer to the reports in the **`model-reports/`**. However, for a quick summary:
+
+- **MUTAG Classification:**
+  - GIN Test Accuracy: 86.84%
+
+- **Custom BA2MOTIF Dataset:**
+  - GCN Test Accuracy: 100.00%
+  - GIN Test Accuracy: 99.50% 
+  - Fine-tuned GIN Test Accuracy: 100.00%
+
 
 ## Future Plans
 - [In Progress] Evaluate PGExplainer for the entire dataset
 - Implement PGExplainer from scratch
-- Research different graph explainability models and approaches to solve the out-of-distribution (OOD) problems for training explainability models (i.e., explainable subgraphs are OOD when fed back into graph classification models)
-- Add a form of discrete denoise diffusion modeling for graph generation
+- Research different explainability models to address out-of-distribution (OOD) problems for training explainers (i.e., explainable subgraph is OOD when fed back into graph classification model)
+- Implement discrete denoise diffusion modeling for graph generation
 
 
