@@ -5,7 +5,7 @@ This repository was created to gain a better understanding of some of the resear
 - Various Graph Convolutional Network (GCN) and Graph Isomorphism Network (GIN) classification models
 - A creation of a custom BA2MOTIF dataset from scratch
 - Fine-tuning with edge pertubation and node feature masking
-- Use of PGExplainer to identify motifs in the custom BA2MOTIF datsaet
+- Use of PGExplainer to explain GIN classifications on BA2MOTIF dataset by extracting motif subgraph
 
 In addition to this code, I also researched other popular explainers (e.g., GNNExplainer, ProxyExplainer) and learned of the basics of discrete denoise diffusion modeling (e.g., Digress, RePaint) for graph generation.
 
@@ -37,14 +37,14 @@ The project is organized as follows:
   - `BA2Motif-scratch.ipynb` contains analysis of BA2MOTIF dataset, custom implementation of dataset, development of GCN and GIN, fine-tuning, and addition of PGExplainer
   - `MUTAG-scratch.ipynb`: Includes creation of molecular graph classes with underlying matrix and dictionary structures. Also includes GIN classifier
 
-- `notes.pdf`: Handwritten notes created to better understand and complete the project. 
+- `notes.pdf`: Handwritten notes created to better understand and complete the project. Listed below are the most important sections to guide understanding.
   - Table of Contents (page 1)
-  - GNN (page 10-17)
-  - Explainability (page 20-27)
+  - GNNs (pages 7–16)
+  - PGExplainer (pages 23–34)
 
 
 ## Citations
-I modified the code for the Parameterized Explainer to be compatibible with the custom BA2MOTIF dataset I created.
+I modified the code (cited below) for PGExplainer, a parameterized explainer, to be compatible with the custom BA2MOTIF dataset I created. 
 
 **Bibtex citation**
 ```
@@ -56,11 +56,12 @@ I modified the code for the Parameterized Explainer to be compatibible with the 
 }
 ```
 ## Summary of Results
-Details of the models and their methodologies provided in **`model-reports/`**. However, for a quick summary, the MUTAG classification GIN had a test accuracy of 86.84%. Additionally, for the custom BA2MOTIF dataset, the test accuracies for the GCN, GIN, fine-tuned GCN, were 100%, 99.50%, and 100% respectively.
+Details of the models and their methodologies provided in **`model-reports/`**. However, for a quick summary, the MUTAG classification GIN had a test accuracy of 86.84%. Additionally, for the custom BA2MOTIF dataset, the test accuracies for the GCN, GIN, fine-tuned GIN, were 100%, 99.50%, and 100% respectively.
 
 ## Future Plans
 - [In Progress] Evaluate PGExplainer for the entire dataset
 - Implement PGExplainer from scratch
 - Research different graph explainability models and approaches to solve the out-of-distribution (OOD) problems for training explainability models (i.e., explainable subgraphs are OOD when fed back into graph classification models)
+- Add a form of discrete denoise diffusion modeling for graph generation
 
 
