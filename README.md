@@ -50,7 +50,7 @@ The project is organized as follows:
 - **`notebooks/`**: Model development process
   - `BA2Motif-scratch.ipynb`: BA2MOTIF dataset analysis and implementation, GCN/GIN development, fine-tuning, addition of PGExplainer
   - `MUTAG-scratch.ipynb`: Custom molecular graph classes and GIN classifier
-    - `PGExplainer.ipynb`: Training and inference of explainer with custom BA2MOTIF dataset
+  - `PGExplainer.ipynb`: Training and inference of explainer with custom BA2MOTIF dataset
 
 - **`PGExplain/`**: Modified PGExplainer code
 
