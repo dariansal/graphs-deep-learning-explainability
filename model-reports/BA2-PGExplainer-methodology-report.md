@@ -125,8 +125,8 @@ PGExplainer correctly identified the subgraph that led to the GIN classifier's d
 
 ### Key Takeaways
 
-- The BA2MOTIF dataset is a common benchmark for evaluating graph explainers.
-- Both GCN and GIN perform exceptionally well in classifying the BA2MOTIF dataset.
+- The BA2MOTIF dataset is a common benchmark for evaluating graph explainers
+- Both GCN and GIN perform exceptionally well in classifying the BA2MOTIF dataset
 - Fine-tuning with graph perturbations improved the GIN's performance to match that of the GCN
 - PGExplainer effectively justifies the classifications made by the fine-tuned GIN, providing visual explanations of the relevant motifs
-- [In Progress] Evaluate the PGExplainer's accuracy against ground truth labels for motif edges.
+- [In Progress] Evaluate the PGExplainer's accuracy against ground truth labels for motif edges
