@@ -7,7 +7,7 @@ This repository was created to gain a better understanding of some of the resear
 - Fine-tuning with edge pertubation and node feature masking
 - Use of PGExplainer to identify motifs in the custom BA2MOTIF datsaet
 
-In addition to this code, I also researched other popular explainers (e.g., GNNExplainer, ProxyExplainer) and learned of the basics of discrete denoise diffusion modeling.
+In addition to this code, I also researched other popular explainers (e.g., GNNExplainer, ProxyExplainer) and learned of the basics of discrete denoise diffusion modeling (e.g., Digress, RePaint) for graph generation.
 
 ## Reproducibility
 To reproduce the project:
@@ -59,8 +59,8 @@ I modified the code for the Parameterized Explainer to be compatibible with the 
 Details of the models and their methodologies provided in **`model-reports/`**. However, for a quick summary, the MUTAG classification GIN had a test accuracy of 86.84%. Additionally, for the custom BA2MOTIF dataset, the test accuracies for the GCN, GIN, fine-tuned GCN, were 100%, 99.50%, and 100% respectively.
 
 ## Future Plans
+- [In Progress] Evaluate PGExplainer for the entire dataset
 - Implement PGExplainer from scratch
-- Research different graph explainability models
-- Research ways to solve the out-of-distribution (OOD) problems for training explainability models (explainable subgraphs are OOD when fed back into graph classification models)
+- Research different graph explainability models and approaches to solve the out-of-distribution (OOD) problems for training explainability models (i.e., explainable subgraphs are OOD when fed back into graph classification models)
 
 

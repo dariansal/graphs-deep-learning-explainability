@@ -10,7 +10,7 @@ that the graph visualization between the original and replicate results would be
 to clarify the code. 
 """
 
-def plot(graph, edge_weigths, labels, idx, thres_min, thres_snip, dataset, args=None, gt=None, show=False):
+def plot(graph, edge_weights, labels, idx, thres_min, thres_snip, dataset, args=None, gt=None, show=False):
     """
     Function that can plot an explanation (sub)graph and store the image.
 
@@ -25,32 +25,35 @@ def plot(graph, edge_weigths, labels, idx, thres_min, thres_snip, dataset, args=
     :param show: flag to show plot made
     """
     # Set thresholds
-    sorted_edge_weigths, _ = torch.sort(edge_weigths)
+    sorted_edge_weights, _ = torch.sort(edge_weights, descending=False)  # Sort in ascending order
+    thres_index = min(int(thres_snip), edge_weights.shape[0] - 1)
+    thres = sorted_edge_weights[thres_index]
 
-    thres_index = max(int(edge_weigths.shape[0]-thres_snip),0)
-
-    thres = sorted_edge_weigths[thres_index]
     if thres_min == -1:
-        filter_thres_index = 0
+        filter_thres_index = edge_weights.shape[0] - 1
     else:
-        filter_thres_index = min(thres_index,
-                                max(int(edge_weigths.shape[0]-edge_weigths.shape[0]/2),
-                                    edge_weigths.shape[0]-thres_min))
-    filter_thres = sorted_edge_weigths[filter_thres_index]
+        filter_thres_index = max(thres_index,
+                                min(int(edge_weights.shape[0]/2),
+                                    thres_min))
+    filter_thres = sorted_edge_weights[filter_thres_index]
+
     # Init edges
     filter_nodes = set()
     filter_edges = []
     pos_edges = []
+
     # Select all edges and nodes to plot
-    for i in range(edge_weigths.shape[0]):
-        # Select important edges
-        if edge_weigths[i] >= thres and not graph[0][i] == graph[1][i]:
-            pos_edges.append((graph[0][i].item(),graph[1][i].item()))
+    for i in range(edge_weights.shape[0]):
+        # Select least important edges
+        if edge_weights[i] <= thres and not graph[0][i] == graph[1][i]:
+            pos_edges.append((graph[0][i].item(), graph[1][i].item()))
+        
         # Select all edges to plot
-        if edge_weigths[i] > filter_thres and not graph[0][i] == graph[1][i]:
-            filter_edges.append((graph[0][i].item(),graph[1][i].item()))
+        if edge_weights[i] < filter_thres and not graph[0][i] == graph[1][i]:
+            filter_edges.append((graph[0][i].item(), graph[1][i].item()))
             filter_nodes.add(graph[0][i].item())
             filter_nodes.add(graph[1][i].item())
+
     num_nodes = len(pos_edges)
 
     # Initialize graph object
@@ -124,7 +127,8 @@ def plot(graph, edge_weigths, labels, idx, thres_min, thres_snip, dataset, args=
         G.add_nodes_from(nodes)
         G.add_edges_from(edges)
         # Let the graph generate all positions
-        pos = nx.kamada_kawai_layout(G)
+        #pos = nx.kamada_kawai_layout(G)
+        pos = nx.spring_layout(G)
 
         pos_edges = [(u, v) for (u, v) in pos_edges if u in G.nodes() and v in G.nodes()]
 
