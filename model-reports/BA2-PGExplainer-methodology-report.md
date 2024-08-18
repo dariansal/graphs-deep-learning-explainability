@@ -126,7 +126,7 @@ As a result of this temporary fix, PGExplainer correctly identifies the subgraph
 - **Test Accuracy**: 100.00%
 
 4. PGExplainer
-- Overall accuracy cannot be currently evaluated due to lack of ground truth labels for motif edges (In Progress)
+- Overall accuracy cannot be currently evaluated due to lack of ground truth labels for motif edges
 - It is suspected that the explainer identifies the most important edges for the correct class as the least important for detecting the other class, which may lead to incorrect explanations
 
 ### Key Takeaways
