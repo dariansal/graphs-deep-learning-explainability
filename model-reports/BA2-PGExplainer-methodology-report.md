@@ -138,4 +138,4 @@ As a result of this temporary fix, PGExplainer correctly identifies the subgraph
 
 ### Future Work
 - [In Progress] Investigate why PGExplainer made decision to identify important edges as the least important
-- [In Progress] Evaluate the PGExplainer's accuracy against ground truth labels for motif edges
+- [In Progress] Evaluate the PGExplainer accuracy against ground truth labels for motif edges

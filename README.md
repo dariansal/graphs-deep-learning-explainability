@@ -59,6 +59,27 @@ The project is organized as follows:
   - GNNs (pages 7–16)
   - PGExplainer (pages 23–34)
 
+## Summary of Results
+For detailed methodologies and analyses, refer to the reports in the **`model-reports/`**. However, for a quick summary:
+
+- **MUTAG Classification:**
+  - GIN Test Accuracy: 86.84%
+
+- **Custom BA2MOTIF Dataset:**
+  - GCN Test Accuracy: 100.00%
+  - GIN Test Accuracy: 99.50% 
+  - Fine-tuned GIN Test Accuracy: 100.00%
+
+- **PGExplainer:**
+  - Overall accuracy cannot be currently evaluated due to lack of ground truth labels for motif edges (In Progress)
+
+## Future Plans
+- [In Progress] Investigate why PGExplainer made decision to identify important edges as the least important before temporary fix (detailed in `BA2-PGExplainer-methodology-report.md`) 
+- [In Progress] Evaluate PGExplainer for the entire dataset
+- Implement PGExplainer from scratch
+- Research different explainability models to address out-of-distribution (OOD) problems for training explainers (i.e., explainable subgraph is OOD when fed back into graph classification model)
+- Implement discrete denoise diffusion modeling for graph generation
+
 
 ## Citations
 This project uses modified code of PGExplainer. The code was modified to be compatible with the custom BA2MOTIF dataset.
@@ -72,27 +93,6 @@ This project uses modified code of PGExplainer. The code was modified to be comp
   year={2021}
 }
 ```
-## Summary of Results
-For detailed methodologies and analyses, refer to the reports in the **`model-reports/`**. However, for a quick summary:
 
-- **MUTAG Classification:**
-  - GIN Test Accuracy: 86.84%
-
-- **Custom BA2MOTIF Dataset:**
-  - GCN Test Accuracy: 100.00%
-  - GIN Test Accuracy: 99.50% 
-  - Fine-tuned GIN Test Accuracy: 100.00%
-
-- **PGExplainer:**
-- Overall accuracy cannot be currently evaluated due to lack of ground truth labels for motif edges (In Progress)
-
-
-
-## Future Plans
-- [In Progress] Investigate why PGExplainer made decision to identify important edges as the least important before temporary fix (detailed in `BA2-PGExplainer-methodology-report.md`) 
-- [In Progress] Evaluate PGExplainer for the entire dataset
-- Implement PGExplainer from scratch
-- Research different explainability models to address out-of-distribution (OOD) problems for training explainers (i.e., explainable subgraph is OOD when fed back into graph classification model)
-- Implement discrete denoise diffusion modeling for graph generation
-
-
+## Usage Rights
+This repository is publicly visible for academic purposes only. Any unauthorized use, reproduction, or distribution requires explicit permission from the repository owner.
