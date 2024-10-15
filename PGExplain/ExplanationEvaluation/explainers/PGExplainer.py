@@ -89,19 +89,20 @@ class PGExplainer(BaseExplainer):
     def _loss(self, masked_pred, original_pred, mask, reg_coefs):
         """
         Returns the loss score based on the given mask.
-        :param masked_pred: Prediction based on the current explanation
-        :param original_pred: Predicion based on the original graph
-        :param edge_mask: Current explanaiton
+        :param masked_pred: Prediction (MLP output layer) based on the current explanation
+        :param original_pred: Predicion (1 or 0) based on the original graph
+        :param mask: Current edge importance mask
         :param reg_coefs: regularization coefficients
         :return: loss
         """
         #Punishing explainer for weighing too many edges as important
-        size_reg = reg_coefs[0]
-        entropy_reg = reg_coefs[1]
+        size_reg = reg_coefs[0] #punishes having too many edges as important
+        entropy_reg = reg_coefs[1] #pushes towards 0 and 1
 
         # Regularization losses
         size_loss = torch.sum(mask) * size_reg
-        mask_ent_reg = -mask * torch.log(mask) - (1 - mask) * torch.log(1 - mask)
+        
+        mask_ent_reg = -mask * torch.log(mask) - (1 - mask) * torch.log(1 - mask) 
         mask_ent_loss = entropy_reg * torch.mean(mask_ent_reg)
 
         # Explanation loss

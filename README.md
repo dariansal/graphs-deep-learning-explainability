@@ -7,8 +7,8 @@ This repository includes the following:
 - Custom molecular graph classes with underlying matrix and dictionary representations
 - A creation of a custom BA2MOTIF dataset from scratch
 - Various GCN and GIN classification models
-- Fine-tuning with edge pertubation and node feature masking
-- Use of PGExplainer to explain GCN classifications on BA2MOTIF dataset by highlighting motif subgraph
+- Fine-tuning with edge perturbation and node feature masking
+- Use of PGExplainer to explain GCN classifications on BA2MOTIF dataset by identifying explanatory subgraphs (motifs)
 
 Additional researched areas include:
 - New explainers for graph models (e.g., GNNExplainer, ProxyExplainer)
@@ -40,14 +40,14 @@ The project is organized as follows:
   - `BA2-PGExplainer-methodology-report.md`
   - `MUTAG-methodology-report.md`
 
-- **`models/`**: 
+- **`models/`**:  
   - Naming convention `{GCN/GIN}-{test-accuracy}.pth`; placeholders enclosed in {}
   - **`BA2MOTIF/`**: Trained GNNs for custom BA2MOTIF dataset
   - **`MUTAG/`**: Trained GNNs for official MUTAG dataset
   - **`PGExplainer/`**: Trained PGExplainer for BA2MOTIF classification models
   
 - **`notebooks/`**: Model development process
-  - `BA2Motif-scratch.ipynb`: custom BA2MOTIF dataset creation and analysis, GCN/GIN development, fine-tuning
+  - `BA2MOTIF-scratch.ipynb`: custom BA2MOTIF dataset creation and analysis, GCN/GIN development, fine-tuning
   - `MUTAG-scratch.ipynb`: Custom molecular graph classes and GIN classifier
   - `PGExplainer.ipynb`: Training and inference of explainer with custom BA2MOTIF dataset
 
@@ -70,7 +70,7 @@ For detailed methodologies and analyses, refer to the reports in the **`model-re
   - Fine-tuned GIN Test Accuracy: 100.00%
 
 - **PGExplainer:**
-  - Overall accuracy has not yet been evaluated
+  - Overall test accuracy has not yet been evaluated, but based on manual classification, it is expected to exceed 90%
 
 ## Future Plans
 - Evaluate PGExplainer train and test accuracy for the entire custom BA2MOTIF dataset

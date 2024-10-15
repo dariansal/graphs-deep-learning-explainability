@@ -2,7 +2,7 @@
 
 1. [Introduction](#introduction)
 2. [Barabási-Albert (BA) Graph](#barabási-albert-ba-graph)
-3. [BA2MOTIF Dataset](#ba2motif-dataset)
+3. [Custom BA2MOTIF Dataset](#custom-ba2motif-dataset)
 4. [Models](#models)
    - [Graph Convolutional Network (GCN) Classifier](#graph-convolutional-network-gcn-classifier)
    - [Graph Isomorphism Network (GIN) Classifier](#graph-isomorphism-network-gin-classifier)
@@ -18,24 +18,27 @@ This report outlines the process of analyzing the BA2MOTIF dataset, creating a c
 
 ## Barabási-Albert (BA) Graph
 <figure>
-  <img src="visuals/ba-degree.png" alt="BA graph" width="400" height="300">
+  <img src="visuals/ba-degree.png" alt="BA graph" width="500" height="400">
   <figcaption>Figure 1: Distribution of degrees in BA graph</figcaption>
 </figure>
 
 In a BA graph, nodes with more connections are more likely to form even more connections with new nodes of the graph. As a result, and as seen in Figure 1, few nodes have high degrees and most nodes have low degrees.
 
 
-## BA2MOTIF Dataset
+## Custom BA2MOTIF Dataset
 <figure>
-  <img src="visuals/house-cycle.png" alt="BA2MOTIF" width="800" height="400">
+  <img src="visuals/house-cycle.png" alt="BA2MOTIF" width="900" height="450">
   <figcaption>Figure 2: House and cycle motif from custom BA2MOTIF dataset</figcaption>
 </figure>
 
-The BA2MOTIF dataset is a synthetic dataset of 1000 BA graphs with a motif attached to them. 500 graphs have a house motif and the other 500 have a cycle motif. A custom version of the dataset was created for use in classification and explanation models. In the custom version:
+The BA2MOTIF dataset is a synthetic dataset of 1000 BA graphs with a motif attached to them. 500 graphs have an attached house motif and the other 500 have an attached cycle motif. A custom version of this dataset was created for educational purposes. The GNN classification task is to determine whether the BA2MOTIF graph contains a house or cycle motif, and the explanation task is to identify the primary subgraph responsible for the GNN classification.
+
+In the custom BA2MOTIF dataset:
 - Each BA2MOTIF graph has 20 non-motif nodes and 5 motif nodes
-- The nodes are sequentially numbered, with the base graph nodes numbered 0-19 and the motif nodes numbered 20-24
-   - Purely for internal data organization; not used as a feature in the classification task to ensure fair and unbiased learning
-- The classification task is to determine whether the attached motif is a house (1) or a cycle (0)
+- The edge connecting the motif to the BA graph is between a randomly chosen BA graph node and a randomly chosen motif node.
+- Node feature: nodes have one identical feature (set to 1);  this forces GNN to learn solely from graph structure
+- Edge feature: 1 for motif edges (edge between two nodes in motif), 0 for non-motif edges; edge feature not used in GNN, but may later be used in evaluating explainer accuracy
+- House BA2MOTIF graphs (BA graph with attached house motif) are labeled 1, and cycle BA2MOTIF graphs are labeled 0
 
 ## Models
 
@@ -85,47 +88,47 @@ Improved Results
 
 
 ## PGExplainer
-- PGExplainer is used to weigh edges by their importance in the trained GCN's classifications. PGExplainer outputs a weighted edge mask, where the mask indicates the probablity of each edge being a part of the explainer subgraph.
+- PGExplainer is used to weigh edges by their importance in the trained GCN's classifications. PGExplainer outputs a weighted edge mask, where each value (between 0 and 1) of the edge mask indicates the importance of that edge in the GCN's decision.
 
 ### Training
 - The loss function for the training process involved multiple components, which relate to trainable weighted edge mask of PGExplainer.
 
-- Loss Function Components
-   1. Difference between normal GCN classification and GCN classification with weighted edge mask applied (and weighted message passing)
-   2. Regularization coefficients to minimize size of explanation and to encourage discreteness in the edge weights 
+- Loss function components:
+   - Difference between normal GCN classification and GCN classification with weighted edge mask applied to graph (i.e. original graph with weighted message passing)
+   - Regularization coefficients to minimize size of explanation and to encourage discreteness in the edge weights 
 
 
 <figure>
-  <img src="visuals/pg-train.png" alt="Training" width="500" height="250">
+  <img src="visuals/pg-train.png" alt="Training" width="600" height="300">
   <figcaption>Figure 3: Total loss per epoch during PGExplainer training</figcaption>
 </figure>
 
-- Approximately 40 epochs of training appeared to minimze the loss well without overfitting
+- Approximately 40 epochs of training appeared to minimize the loss well without overfitting
 
 ### Inference
-- After training PGExplainer, graphs from the custom BA2MOTIF dataset were fed into both the GCN classifier and PGExplainer. The outputted edge mask of PGExplainer was used to create a visualization of the proposed explainer subgraph. This was done by looking at the k (a parameter) most important edges, and highlighting the largest subgraph formed from these edges. The explainer subgraph, highlighted in red, should be the attached motif (house or cycle). Sample inputs from the test dataset and the resulting explainer subgraphs from PGExplainer are shown below.
+- After training PGExplainer, graphs from the custom BA2MOTIF dataset were fed into both the GCN classifier and PGExplainer. The outputted edge mask of PGExplainer was used to create a visualization of the proposed explanatory subgraph. This was done by looking at the k (a parameter) most important edges, and highlighting the largest subgraph formed from these edges. The explanatory subgraph, highlighted in red, should be the attached motif (house or cycle). Sample inputs from the test dataset and the resulting explanatory subgraphs from PGExplainer are shown below.
 
 
 #### Cycle Motif
 
 <figure>
-  <img src="visuals/cycle-explained.png" alt="Cycle BA2MOTIF" width="900" height="400">
-  <figcaption>Figure 3: PGExplainer highlights explainer subgraph of cycle BA2MOTIF graph</figcaption>
+  <img src="visuals/cycle-explained.png" alt="Cycle BA2MOTIF" width="1000" height="400">
+  <figcaption>Figure 4: PGExplainer highlights explanatory subgraph of cycle BA2MOTIF graph</figcaption>
 </figure>
 
-This graph from the custom BA2MOTIF dataset is correctly classified by the GCN as having a cycle motif. Additionally, PGExplainer properly identifies the explainer subgraph.
+This graph from the custom BA2MOTIF dataset is correctly classified by the GCN as having a cycle motif. Additionally, PGExplainer properly identifies the explanatory subgraph.
 
 
 #### House Motif
 
 <figure>
-  <img src="visuals/house-explained.png" alt="House BA2MOTIF" width="900" height="400">
-  <figcaption>Figure 3: PGExplainer highlights explainer subgraph of house BA2MOTIF graph</figcaption>
+  <img src="visuals/house-explained.png" alt="House BA2MOTIF" width="1000" height="400">
+  <figcaption>Figure 5: PGExplainer highlights explanatory subgraph of house BA2MOTIF graph</figcaption>
 </figure>
 
-This graph from the custom BA2MOTIF dataset is correctly classified by the GCN as having a house motif. Additionally, PGExplainer properly identifies the explainer subgraph.
+This graph from the custom BA2MOTIF dataset is correctly classified by the GCN as having a house motif. Additionally, PGExplainer properly identifies the explanatory subgraph.
 
-Overall, PGExplainer correctly identifies the explainer subgraph for the GCN classifier's decision for nearly all samples in the dataset. Based on manual classification, the train and test accuracies are expected to exceed 90%.
+Overall, PGExplainer correctly identifies the explanatory subgraph for the GCN classifier's decision for nearly all samples in the dataset. Based on manual classification, the train and test accuracies are expected to exceed 90%.
 
 ## Results and Discussion
 ### Recap of Model Performance
