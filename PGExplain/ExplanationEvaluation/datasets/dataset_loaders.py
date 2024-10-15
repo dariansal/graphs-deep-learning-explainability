@@ -1,115 +1,62 @@
-import pickle as pkl
 import numpy as np
 import os
 from numpy.random.mtrand import RandomState
-from ExplanationEvaluation.datasets.utils import preprocess_adj, adj_to_edge_index, load_real_dataset, get_graph_data
-import torch_geometric.utils as utils
-
-
 import torch
-from torch_geometric.utils import to_dense_adj #converts edge index to adjacency matrix 
 
 
-def load_graph_dataset(_dataset, shuffle=True):
+def load_graph_dataset(shuffle=True):
     """Load a graph dataset and optionally shuffle it.
 
     :param _dataset: Which dataset to load. Choose from "ba2" or "mutag"
     :param shuffle: Boolean. Wheter to shuffle the loaded dataset.
     :returns: np.array
     """
-    # Load the chosen dataset from the pickle file.
-    if _dataset == "ba2":
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        path = dir_path + '/pkls/ba2-explain.pkl'
-        with open(path, 'rb') as f:
-            dataset = pkl.load(f)
-        
-        adjs = []
-        features = []
-        labels = []
-        edge_indices = []
-        
-        for data in dataset:
-            edge_indices.append(data.edge_index)
-            adjs.append(data.adj)  # Assuming adj is a torch tensor
-            features.append(data.x)  # Assuming x contains node features
-            label = data.y.item()
-            labels.append(label)  # Assuming y contains the label
-        
-        # Convert lists to numpy arrays
-        adjs = np.array(adjs)
-        features = np.array(features)
-        labels = np.array(labels)
+    
+    #Load dataset properly
+    #__file__ - the path to current script file
+    #os.path.realpath() Converts path to an absolute path
+    
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    ba2 = torch.load(dir_path + '/serialized-data/custom-ba2.pt')
 
-    else:
-        print("Unknown dataset")
-        raise NotImplemented
 
-    n_graphs = adjs.shape[0]
-    indices = np.arange(0, n_graphs)
+    features = []
+    labels = []
+    edge_indices = [] #edge index format of storing graph structure 
+    
+    #Separate the info for each graph for compatability
+    for data in ba2:
+        edge_indices.append(data.edge_index)
+
+        features.append(data.x)  # Assuming x contains node features
+
+        label = data.y.item()
+        labels.append(label)  # Assuming y contains the label
+    
+    # Convert lists to numpy arrays
+    features = np.array(features)
+    labels = np.array(labels)
+
+    num_graphs = labels.shape[0]
+
+    indices = np.arange(0, num_graphs)
     if shuffle:
-        prng = RandomState(42) # Make sure that the permutation is always the same, even if we set the seed different
+        prng = RandomState(42) #Setting seed
         indices = prng.permutation(indices)
 
     # Create shuffled data
-    adjs = adjs[indices]
     features = features[indices].astype('float32')
     labels = labels[indices]
 
-    # Create masks
-    train_indices = np.arange(0, int(n_graphs*0.8))
-    val_indices = np.arange(int(n_graphs*0.8), int(n_graphs*0.9))
-    test_indices = np.arange(int(n_graphs*0.9), n_graphs)
-    train_mask = np.full((n_graphs), False, dtype=bool)
+    # Create masks (not used)
+    train_indices = np.arange(0, int(num_graphs*0.8))
+    val_indices = np.arange(int(num_graphs*0.8), int(num_graphs*0.9))
+    test_indices = np.arange(int(num_graphs*0.9), num_graphs)
+    train_mask = np.full((num_graphs), False, dtype=bool)
     train_mask[train_indices] = True
-    val_mask = np.full((n_graphs), False, dtype=bool)
+    val_mask = np.full((num_graphs), False, dtype=bool)
     val_mask[val_indices] = True
-    test_mask = np.full((n_graphs), False, dtype=bool)
+    test_mask = np.full((num_graphs), False, dtype=bool)
     test_mask[test_indices] = True
 
-    # Transform to edge index
-    #edge_index = adj_to_edge_index(adjs)
-    #print(edge_index[0])
-
     return edge_indices, features, labels, train_mask, val_mask, test_mask
-
-
-def _load_node_dataset(_dataset):
-    """Load a node dataset.
-
-    :param _dataset: Which dataset to load. Choose from "syn1", "syn2", "syn3" or "syn4"
-    :returns: np.array
-    """
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    path = dir_path + '/pkls/' + _dataset + '.pkl'
-    with open(path, 'rb') as fin:
-        adj, features, y_train, y_val, y_test, train_mask, val_mask, test_mask, edge_label_matrix  = pkl.load(fin)
-    labels = y_train
-    labels[val_mask] = y_val[val_mask]
-    labels[test_mask] = y_test[test_mask]
-
-    return adj, features, labels, train_mask, val_mask, test_mask
-
-
-def load_dataset(_dataset, skip_preproccessing=False, shuffle=True):
-    """High level function which loads the dataset
-    by calling others spesifying in nodes or graphs.
-
-    Keyword arguments:
-    :param _dataset: Which dataset to load. Choose from "syn1", "syn2", "syn3", "syn4", "ba2" or "mutag"
-    :param skip_preproccessing: Whether or not to convert the adjacency matrix to an edge matrix.
-    :param shuffle: Should the returned dataset be shuffled or not.
-    :returns: multiple np.arrays
-    """
-    print(f"Loading {_dataset} dataset")
-    if _dataset[:3] == "syn": # Load node_dataset
-        adj, features, labels, train_mask, val_mask, test_mask = _load_node_dataset(_dataset)
-        preprocessed_features = preprocess_features(features).astype('float32')
-        if skip_preproccessing:
-            graph = adj
-        else:
-            graph = preprocess_adj(adj)[0].astype('int64').T
-        labels = np.argmax(labels, axis=1)
-        return graph, preprocessed_features, labels, train_mask, val_mask, test_mask
-    else: # Load graph dataset
-        return load_graph_dataset(_dataset, shuffle)

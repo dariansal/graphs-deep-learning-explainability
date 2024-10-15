@@ -8,7 +8,7 @@ This repository includes the following:
 - A creation of a custom BA2MOTIF dataset from scratch
 - Various GCN and GIN classification models
 - Fine-tuning with edge pertubation and node feature masking
-- Use of PGExplainer to explain GIN classifications on BA2MOTIF dataset by extracting motif subgraph
+- Use of PGExplainer to explain GCN classifications on BA2MOTIF dataset by highlighting motif subgraph
 
 Additional researched areas include:
 - New explainers for graph models (e.g., GNNExplainer, ProxyExplainer)
@@ -32,8 +32,7 @@ The project is organized as follows:
 
 - **`data/`**: 
   - **`BA2MOTIF/`**: Premade BA2MOTIF dataset
-  - `custom-ba2motif.pkl`: Serialized version of the custom BA2MOTIF dataset.
-  - `ba2-explain.pkl`: Custom BA2MOTIF dataset used for PGExplainer
+  - `custom-ba2motif.pt`: Serialized version of the custom BA2MOTIF dataset.
   - **`MUTAG/`**: Official MUTAG dataset
 
 - **`model-reports/`**: Methodology and analysis reports
@@ -41,14 +40,14 @@ The project is organized as follows:
   - `BA2-PGExplainer-methodology-report.md`
   - `MUTAG-methodology-report.md`
 
-- **`models/`**: Saved graph classification GNNs:
+- **`models/`**: 
   - Naming convention `{GCN/GIN}-{test-accuracy}.pth`; placeholders enclosed in {}
   - **`BA2MOTIF/`**: Trained GNNs for custom BA2MOTIF dataset
   - **`MUTAG/`**: Trained GNNs for official MUTAG dataset
   - **`PGExplainer/`**: Trained PGExplainer for BA2MOTIF classification models
   
 - **`notebooks/`**: Model development process
-  - `BA2Motif-scratch.ipynb`: BA2MOTIF dataset analysis and implementation, GCN/GIN development, fine-tuning, addition of PGExplainer
+  - `BA2Motif-scratch.ipynb`: custom BA2MOTIF dataset creation and analysis, GCN/GIN development, fine-tuning
   - `MUTAG-scratch.ipynb`: Custom molecular graph classes and GIN classifier
   - `PGExplainer.ipynb`: Training and inference of explainer with custom BA2MOTIF dataset
 
@@ -71,18 +70,16 @@ For detailed methodologies and analyses, refer to the reports in the **`model-re
   - Fine-tuned GIN Test Accuracy: 100.00%
 
 - **PGExplainer:**
-  - Overall accuracy cannot be currently evaluated due to lack of ground truth labels for motif edges (In Progress)
+  - Overall accuracy has not yet been evaluated
 
 ## Future Plans
-- [In Progress] Investigate why PGExplainer made decision to identify important edges as the least important before temporary fix (detailed in `BA2-PGExplainer-methodology-report.md`) 
-- [In Progress] Evaluate PGExplainer for the entire dataset
-- Implement PGExplainer from scratch
-- Research different explainability models to address out-of-distribution (OOD) problems for training explainers (i.e., explainable subgraph is OOD when fed back into graph classification model)
-- Implement discrete denoise diffusion modeling for graph generation
+- Evaluate PGExplainer train and test accuracy for the entire custom BA2MOTIF dataset
+- Research different explainability models to address out-of-distribution (OOD) problems (i.e., explainable subgraph is OOD when fed back into GNN) for explainer training
+- Implement discrete denoise diffusion modeling for in-distribution graph generation of BA2MOTIF dataset
 
 
 ## Citations
-This project uses modified code of PGExplainer. The code was modified to be compatible with the custom BA2MOTIF dataset.
+This project significantly modified the code of PGExplainer for better readability and functionality. Additionally, the code was made compatible with the custom BA2MOTIF dataset.
 
 **Bibtex citation**
 ```

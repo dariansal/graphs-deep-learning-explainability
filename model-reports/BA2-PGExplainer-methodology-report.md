@@ -14,11 +14,11 @@
 
 ## Introduction
 
-This report outlines the process of analyzing the BA2MOTIF dataset, creating a custom version from scratch, applying multiple classification models, fine-tuning, and using PGExplainer to extract relevant subgraphs (motifs) in the classification of the fine-tuned Graph Isomorphism Network (GIN).
+This report outlines the process of analyzing the BA2MOTIF dataset, creating a custom version from scratch, applying multiple classification models, fine-tuning, and using PGExplainer to highlight relevant subgraphs (motifs) for the classifications of a Graph Convolutional Network (GCN).
 
 ## Barabási-Albert (BA) Graph
 <figure>
-  <img src="visuals/badegree.png" alt="BA graph" width="400" height="300">
+  <img src="visuals/ba-degree.png" alt="BA graph" width="400" height="300">
   <figcaption>Figure 1: Distribution of degrees in BA graph</figcaption>
 </figure>
 
@@ -28,7 +28,7 @@ In a BA graph, nodes with more connections are more likely to form even more con
 ## BA2MOTIF Dataset
 <figure>
   <img src="visuals/house-cycle.png" alt="BA2MOTIF" width="800" height="400">
-  <figcaption>Figure 2: Different motifs in BA2MOTIF dataset</figcaption>
+  <figcaption>Figure 2: House and cycle motif from custom BA2MOTIF dataset</figcaption>
 </figure>
 
 The BA2MOTIF dataset is a synthetic dataset of 1000 BA graphs with a motif attached to them. 500 graphs have a house motif and the other 500 have a cycle motif. A custom version of the dataset was created for use in classification and explanation models. In the custom version:
@@ -50,12 +50,11 @@ The BA2MOTIF dataset is a synthetic dataset of 1000 BA graphs with a motif attac
 - Initial training: one train/validation split
 - Highest validation accuracy: 99.38%
 - Final model performance:
-   - Train Accuracy: 100%
-   - Test Accuracy: 100%
+   - Train Accuracy: 99.84%
+   - Test Accuracy: 100.00%
 
 **Inference on Different Data**
-- Tested on a BA2MOTIF graph with 30 non-motif nodes (out-of-distribution)
-- Successfully predicted a cycle motif with 95.85% confidence
+- Successfully classified a house BA2MOTIF graph with 30 non-motif nodes (out-of-distribution) with 100% confidence
 
 
 ### Graph Isomorphism Network (GIN) Classifier
@@ -69,73 +68,88 @@ The BA2MOTIF dataset is a synthetic dataset of 1000 BA graphs with a motif attac
 **Training**
 - Number of epochs: 100
 - Initial training: one train/validation split
-- Highest validation accuracy: ~98.5%
+- Highest validation accuracy: 98.50%
 - Final model performance:
-   - Train Accuracy: 99.38%
+   - Train Accuracy: 99.22%
    - Test Accuracy: 99.50%
 
 ### Fine-Tuning With Graph Perturbation
 To improve the trained GIN's performance:
 
-- Froze parameters of all layers except the final MLP classification layer
-- Fine-tuned on an augmented BA2MOTIF dataset for 20 epochs
-- Augmentations included node feature masking and edge perturbations
+- Froze parameters of all layers except the final MLP classification layer (whose parameters were reinitialized)
+- Fine-tuned GIN with an augmented BA2MOTIF dataset (augmentations included node feature masking, edge perturbations) for 30 epochs
 
 Improved Results
-- Train Accuracy: 99.69%
+- Train Accuracy: 99.38%
 - Test Accuracy: 100.00%
 
 
 ## PGExplainer
-- PGExplainer was used to extract relevant subgraphs that contributed to the fine-tuned GIN's predictions
+- PGExplainer is used to weigh edges by their importance in the trained GCN's classifications. PGExplainer outputs a weighted edge mask, where the mask indicates the probablity of each edge being a part of the explainer subgraph.
 
-## Implementation
+### Training
+- The loss function for the training process involved multiple components, which relate to trainable weighted edge mask of PGExplainer.
+
+- Loss Function Components
+   1. Difference between normal GCN classification and GCN classification with weighted edge mask applied (and weighted message passing)
+   2. Regularization coefficients to minimize size of explanation and to encourage discreteness in the edge weights 
+
+
+<figure>
+  <img src="visuals/pg-train.png" alt="Training" width="500" height="250">
+  <figcaption>Figure 3: Total loss per epoch during PGExplainer training</figcaption>
+</figure>
+
+- Approximately 40 epochs of training appeared to minimze the loss well without overfitting
 
 ### Inference
-- After training PGExplainer, graphs from the custom BA2MOTIF dataset were inserted into both the GIN classifier and PGExplainer
-- Originally, PGExplainer performed very poorly, extracting the incorrect subgraph for all the graphs tested
-- After discovering PGExplainer consistently confused the most important edges for the least edges, the `plotting.py` module was altered to pick the least important edges from the subgraph and plot them
+- After training PGExplainer, graphs from the custom BA2MOTIF dataset were fed into both the GCN classifier and PGExplainer. The outputted edge mask of PGExplainer was used to create a visualization of the proposed explainer subgraph. This was done by looking at the k (a parameter) most important edges, and highlighting the largest subgraph formed from these edges. The explainer subgraph, highlighted in red, should be the attached motif (house or cycle). Sample inputs from the test dataset and the resulting explainer subgraphs from PGExplainer are shown below.
+
+
+#### Cycle Motif
 
 <figure>
-  <img src="visuals/explained.png" alt="BA2MOTIF" width="600" height="250">
-  <figcaption>Figure 3: BA2MOTIF graph fed into PGExplainer</figcaption>
+  <img src="visuals/cycle-explained.png" alt="Cycle BA2MOTIF" width="900" height="400">
+  <figcaption>Figure 3: PGExplainer highlights explainer subgraph of cycle BA2MOTIF graph</figcaption>
 </figure>
 
-This graph from the custom BA2MOTIF dataset was correctly classified by the fine-tuned GIN as having a house motif.
+This graph from the custom BA2MOTIF dataset is correctly classified by the GCN as having a cycle motif. Additionally, PGExplainer properly identifies the explainer subgraph.
+
+
+#### House Motif
+
 <figure>
-  <img src="visuals/explanation.png" alt="BA2MOTIF explanation" width="400" height="300">
-  <figcaption>Figure 4: PGExplainer's explanation of Figure 3</figcaption>
+  <img src="visuals/house-explained.png" alt="House BA2MOTIF" width="900" height="400">
+  <figcaption>Figure 3: PGExplainer highlights explainer subgraph of house BA2MOTIF graph</figcaption>
 </figure>
 
+This graph from the custom BA2MOTIF dataset is correctly classified by the GCN as having a house motif. Additionally, PGExplainer properly identifies the explainer subgraph.
 
-As a result of this temporary fix, PGExplainer correctly identifies the subgraph that led to the GIN classifier's decision for nearly all samples in the dataset when tested individually. More important edges are colored dark grey, while less important edges are light grey.
+Overall, PGExplainer correctly identifies the explainer subgraph for the GCN classifier's decision for nearly all samples in the dataset. Based on manual classification, the train and test accuracies are expected to exceed 90%.
 
 ## Results and Discussion
 ### Recap of Model Performance
 
 1. GCN Classifier
-- **Train Accuracy**: 100.00%
+- **Train Accuracy**: 99.84%
 - **Test Accuracy**: 100.00%
 
 2. GIN (Initial):
-- **Train Accuracy**: 99.38%
+- **Train Accuracy**: 99.22%
 - **Test Accuracy**: 99.50%
 
 3. GIN (Fine-tuned)
-- **Train Accuracy**: 99.69%
+- **Train Accuracy**: 99.38%
 - **Test Accuracy**: 100.00%
 
 4. PGExplainer
-- Overall accuracy cannot be currently evaluated due to lack of ground truth labels for motif edges
-- It is suspected that the explainer identifies the most important edges for the correct class as the least important for detecting the other class, which may lead to incorrect explanations
+- Overall train and test accuracies have not yet been evaluated, but based on manual classification, they are expected to exceed 90%.
 
 ### Key Takeaways
 
-- The BA2MOTIF dataset is a common benchmark for evaluating graph explainers
 - Both GCN and GIN perform exceptionally well in classifying the BA2MOTIF dataset
 - Fine-tuning with graph perturbations improved the GIN's performance to match that of the GCN
-- PGExplainer, when the fix described above applied, properly justifies the classifications made by the fine-tuned GIN
+- PGExplainer properly explains the classifications made by the GCN
 
-### Future Work
-- [In Progress] Investigate why PGExplainer made decision to identify important edges as the least important
-- [In Progress] Evaluate the PGExplainer accuracy against ground truth labels for motif edges
+### Future Plans
+- Evaluate the PGExplainer accuracy against ground truth labels for motif edges
